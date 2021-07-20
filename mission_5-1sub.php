@@ -1,3 +1,4 @@
+<!-- ver.2 -->
 <!--見返して復習できるように、デバック等を残しています。-->
 <!--データベース名、ユーザー名、パスワードの入力は、全2か所-->
 
@@ -9,14 +10,14 @@
     $password = 'パスワード';
     $pdo = new PDO($dsn, $user, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING));
 
-#テーブルを作成
+#テーブルを作成　テーブル名に-つけられないの意外と注意ポイントな気がする
     $sql = "CREATE TABLE IF NOT EXISTS table5_1t"
     ." ("
     . "id INT AUTO_INCREMENT PRIMARY KEY,"
-    . "name char(32),"
-    . "comment TEXT,"
-    . "t TEXT,"
-    . "pass char(10)"
+    . "name char(32),"  #文字列、半角英数で32文字
+    . "comment TEXT,"   #文字列
+    . "t TEXT," #文字列　
+    . "pass char(10)"   #文字列、半角英数で10文字
     .");";
     $stmt = $pdo->query($sql);
 #echo "作成、異常なし<br><br>";
@@ -139,7 +140,27 @@ if(!empty($_POST["name"])||!empty($_POST["comment"])||!empty($_POST["pass"])||!e
     #削除処理、削除
     if( !empty($_POST["del"])
         &&!empty($_POST["passD"])){
-
+    
+    
+            #投稿番号のデータを変数に代入
+        $id = $del_p ;
+        $sql = 'SELECT * FROM table5_1t WHERE id=:id ';
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $results = $stmt->fetchAll(); 
+            foreach ($results as $row){
+    #データベースの値を変数に代入
+                $id_dp = $row['id'];
+#                $name_ep = $row['name'];
+#                $comment_ep = $row['comment'];
+                $pass_dp = $row['pass'];  
+#デバック用            
+#echo $id_dp.",".$pass_dp;       
+    
+        if($del_p==$id_dp
+            &&$pass_dp==$passD_p){
+                            
 #デバック用     
 #echo "削除if異常なし<br>".$del_p."を削除<br><br>";
             
@@ -149,7 +170,8 @@ if(!empty($_POST["name"])||!empty($_POST["comment"])||!empty($_POST["pass"])||!e
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
             
-        }
+        } #パスワード合ってるかどうか
+        }} #削除処理閉じ
         
 } #全体if閉じ 
 
